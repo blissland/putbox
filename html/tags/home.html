@@ -1,0 +1,19 @@
+<home>
+	<nav class="navbar navbar-light bg-light">
+		<a class="navbar-brand" href="#">PutBox</a>
+		<form class="form-inline">
+    			<button class="btn btn-outline-success" type="button" onclick={ doLogout }>Logout</button>  
+  		</form>
+	</nav>
+	
+	doLogout(e) {
+		console.log("Logout");
+		alite({ method: 'POST', url: '/api/auth/logout' })
+  			.then(function (result) {
+				logout();
+  			})
+  			.catch(function (err) {
+    				console.log(err);
+  		});
+	}
+</home>

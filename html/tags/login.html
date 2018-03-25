@@ -1,0 +1,47 @@
+<login>
+	<div class="container h-100">
+ 		<div class="row h-100 justify-content-center align-items-center">
+			<div class="card">
+				<div class="card-header">
+					<i class="fas fa-box"></i> PutBox
+				</div>
+				<div class="card-body">
+					<form onsubmit={ doLogin }>
+						<div class="form-group">
+							<label for="username" class="font-weight-bold">Username</label>
+							<input type="text" class="form-control" id="username" name="username" autofocus required>
+						</div>
+						<div class="form-group">
+							<label for="password" class="font-weight-bold">Password</label>
+							<input type="password" class="form-control" id="password" name="password" required>
+						</div>
+						<button type="submit" class="btn btn-primary btn-block">Sign in</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	doLogin(e) {
+		e.preventDefault();
+		var username = self.username.value.trim();
+		var password = self.password.value.trim();
+		if (username === '') {
+			self.username.focus();
+			return;
+		}
+		if (password === '') {
+			self.password.focus();
+			return;
+		}
+		alite({ method: 'POST', url: '/api/auth/login', data: {username: username, password: password} })
+  			.then(function (result) {
+    				console.log(result);
+				login(username);
+  			})
+  			.catch(function (err) {
+    				console.log(err);
+  		});
+    	}
+	
+</login>

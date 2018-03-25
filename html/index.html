@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>PutBox</title>
+	
+	<script defer src="https://use.fontawesome.com/releases/v5.0.8/js/solid.js" integrity="sha384-+Ga2s7YBbhOD6nie0DzrZpJes+b2K1xkpKxTFFcx59QmVPaSA8c7pycsNaFwUK6l" crossorigin="anonymous"></script>
+	<script defer src="https://use.fontawesome.com/releases/v5.0.8/js/fontawesome.js" integrity="sha384-7ox8Q2yzO/uWircfojVuCQOZl+ZZBg2D2J5nkpLqzH1HY0C1dHlTKIbpRz/LG23c" crossorigin="anonymous"></script>	
+	
+	<style>
+	   body, html {height:100%;}
+	</style>
+  </head>
+  <body>
+	
+	<div class="h-100" id="page"></div>
+	
+	<script src="//unpkg.com/navigo@6"></script>
+	<script src="https://cdn.jsdelivr.net/npm/riot@3.9/riot+compiler.min.js"></script>
+  	<script src="js/alite.js"></script>
+	
+	<script src="tags/login.html" type="riot/tag"></script>
+	<script src="tags/home.html" type="riot/tag"></script>
+	
+	<script>
+		var mountedTag;
+		var router = new Navigo();
+		var role = "{{ .access }}";
+		
+		var login = function(username) {
+			console.log("Doing login");
+			role = "user";
+			router.navigate("/home");
+		}
+		
+		var logout = function() {
+			console.log("Doing logout");
+			role = "public";
+			router.navigate("/");
+		}
+		
+		var mount = function(tagname) {
+			if (mountedTag) {
+				mountedTag.unmount(true);
+      		}
+			mountedTag = riot.mount('div#page', tagname)[0];
+		} 
+		
+		riot.compile(function() {
+			router.hooks({
+  				before: function(done, params) {
+					console.log("hook");
+					var ok = true;
+					if (router.lastRouteResolved().url) {
+						if (role === "public") {
+							router.navigate("/");
+							ok = false;
+						}
+					} else {
+						if (role !== "public") {
+							router.navigate("/home");
+							ok = false;
+						}
+					}
+					done(ok);
+				}
+			});
+			router
+				.on({
+				'/home': function () {
+					mount('home');
+    				},
+  				'*': function () {
+					mount('login');
+				}
+ 		 	})
+  			.resolve();
+		})
+    </script>
+</body>
+</html>
